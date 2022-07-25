@@ -1,0 +1,1 @@
+export const btnOpacity = () => 0.8
