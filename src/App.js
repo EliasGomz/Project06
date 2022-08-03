@@ -1,9 +1,13 @@
 import React from 'react';
-import Navigation from './Navigate';
+
+// Navigation
+import AppContainer from './Navigate';
 
 const App = () => {
- return (
-    <Navigation />
-  );
+	return (
+		<>
+			<AppContainer />
+		</>
+	);
 };
 export default App;

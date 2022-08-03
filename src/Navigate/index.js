@@ -1,43 +1,41 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useState, useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
+// Navigators
+import AppNavigation from './appNavigate';
+import AuthNavigation from './authNavigation';
+// import AppNavigationTab from './appNavigationTab';
 
-//SCREENS STACK
-import Login from "../Screens/Login";
-import Register from "../Screens/Register";
+// firebase auth
+import auth from '@react-native-firebase/auth';
 
-const Stack = createNativeStackNavigator();
+const AppContainer = () => {
+	const [initializing, setInitializing] = useState(true);
+	const [user, setUser] = useState();
 
-const MyStack = () =>{
-    return(
-        <Stack.Navigator
-            initialRouteName="Login"
-        >
-            <Stack.Screen 
-                name="Login"
-                component={Login}
-                options={{
-                    headerShown: false,
-                }}
-            />
-            <Stack.Screen 
-                name="Register"
-                component={Register}
-                options={{
-                    headerShown: false,
-                    presentation: 'transparentModal'
-                }}
-            />
-        </Stack.Navigator>
-    )
+	function onAuthStateChanged(user) {
+		setUser(user);
+		if (initializing) setInitializing(false);
+	}
+
+	useEffect(() => {
+		GoogleSignin.configure({
+			webClientId:
+				'633599013534-6p6gfucf95rdti6lhmdc4e6pp2655oln.apps.googleusercontent.com',
+		});
+		const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+		return subscriber;
+	}, []);
+
+	if (initializing) return null;
+
+	return (
+		<>
+			<NavigationContainer>
+				{user ? <AppNavigation /> : <AuthNavigation />}
+			</NavigationContainer>
+		</>
+	);
 };
-
-const Navigation = () => {
-    return(
-        <NavigationContainer>
-            <MyStack />
-        </NavigationContainer>
-    )
-}
-export default Navigation;
+export default AppContainer;
